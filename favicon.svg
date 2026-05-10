@@ -1,0 +1,68 @@
+<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <!-- 透明感のあるドロップ型キャンディー -->
+  <!-- 水滴シルエット：上が尖り、下が丸く膨らむ -->
+
+  <!-- ===== ベース（本体の塗り：薄いアクア） ===== -->
+  <!-- y=1 : 頂点 -->
+  <rect x="7" y="1" width="2" height="1" fill="#A8E8DD"/>
+  <!-- y=2 -->
+  <rect x="6" y="2" width="4" height="1" fill="#A8E8DD"/>
+  <!-- y=3 -->
+  <rect x="6" y="3" width="4" height="1" fill="#A8E8DD"/>
+  <!-- y=4 -->
+  <rect x="5" y="4" width="6" height="1" fill="#A8E8DD"/>
+  <!-- y=5 -->
+  <rect x="4" y="5" width="8" height="1" fill="#A8E8DD"/>
+  <!-- y=6 -->
+  <rect x="3" y="6" width="10" height="1" fill="#A8E8DD"/>
+  <!-- y=7..10 : 一番太い部分 -->
+  <rect x="3" y="7" width="10" height="4" fill="#A8E8DD"/>
+  <!-- y=11 -->
+  <rect x="3" y="11" width="10" height="1" fill="#A8E8DD"/>
+  <!-- y=12 -->
+  <rect x="4" y="12" width="8" height="1" fill="#A8E8DD"/>
+  <!-- y=13 -->
+  <rect x="5" y="13" width="6" height="1" fill="#A8E8DD"/>
+  <!-- y=14 : 底 -->
+  <rect x="6" y="14" width="4" height="1" fill="#A8E8DD"/>
+
+  <!-- ===== アウトライン（縁：濃いアクアで輪郭を引く） ===== -->
+  <!-- 上半分・左 -->
+  <rect x="7" y="1" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="6" y="2" width="1" height="2" fill="#3FB8A6"/>
+  <rect x="5" y="4" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="4" y="5" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="3" y="6" width="1" height="6" fill="#3FB8A6"/>
+  <rect x="4" y="12" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="5" y="13" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="6" y="14" width="2" height="1" fill="#3FB8A6"/>
+  <!-- 上半分・右 -->
+  <rect x="8" y="1" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="9" y="2" width="1" height="2" fill="#3FB8A6"/>
+  <rect x="10" y="4" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="11" y="5" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="12" y="6" width="1" height="6" fill="#3FB8A6"/>
+  <rect x="11" y="12" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="10" y="13" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="8" y="14" width="2" height="1" fill="#3FB8A6"/>
+
+  <!-- ===== 下部のたまり（液体感を出すため一段濃い色） ===== -->
+  <rect x="5" y="11" width="6" height="1" fill="#7AD3C4"/>
+  <rect x="5" y="12" width="6" height="1" fill="#7AD3C4"/>
+  <rect x="6" y="13" width="4" height="1" fill="#7AD3C4"/>
+  <!-- たまりの左右端は枠色で締める -->
+  <rect x="4" y="12" width="1" height="1" fill="#3FB8A6"/>
+  <rect x="11" y="12" width="1" height="1" fill="#3FB8A6"/>
+
+  <!-- ===== 内側の色味（うっすらピンクで透ける飴色） ===== -->
+  <rect x="7" y="8" width="2" height="2" fill="#FFD9E8"/>
+
+  <!-- ===== ハイライト（左上の艶：白でガラス感） ===== -->
+  <rect x="6" y="4" width="2" height="1" fill="#FFFFFF"/>
+  <rect x="5" y="5" width="1" height="1" fill="#FFFFFF"/>
+  <rect x="5" y="6" width="1" height="2" fill="#FFFFFF"/>
+  <rect x="6" y="5" width="1" height="1" fill="#FFFFFF"/>
+
+  <!-- ===== 小さなサブハイライト（右下の照り返し） ===== -->
+  <rect x="10" y="10" width="1" height="1" fill="#FFFFFF"/>
+</svg>
