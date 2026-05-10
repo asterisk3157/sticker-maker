@@ -201,7 +201,9 @@
     background: var(--paper-margin);
     box-shadow: 0 8px 32px var(--shadow-canvas);
     flex-shrink: 0;
+    touch-action: none;
   }
+  .sticker, .handle { touch-action: none; }
   #canvas-wrap.dragover { outline: 3px dashed #4a7cfa; outline-offset: 4px; }
   #print-area {
     position: absolute;
@@ -458,6 +460,84 @@
   .modal button.primary { background: #4a7cfa; }
   .modal button:hover { filter: brightness(1.15); }
 
+  /* ハンバーガーボタン（モバイルのみ表示） */
+  #sidebar-toggle { display: none; }
+
+  /* ========= モバイル対応 ========= */
+  @media (max-width: 720px) {
+    #app {
+      grid-template-columns: 1fr;
+    }
+    #toolbar {
+      padding: 0 10px;
+      gap: 6px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+    }
+    #toolbar h1 {
+      font-size: 13px;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+    #toolbar .info { display: none; }
+    #toolbar .spacer { display: none; }
+    #toolbar .icon-btn {
+      min-width: 38px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+    #toolbar button.primary.icon-btn {
+      min-width: 48px;
+      height: 38px;
+    }
+    #sidebar-toggle {
+      display: inline-flex;
+      flex-shrink: 0;
+    }
+    #sidebar {
+      position: fixed;
+      top: 48px;
+      bottom: 0;
+      right: -260px;
+      width: 240px;
+      z-index: 50;
+      transition: right 0.25s ease;
+      box-shadow: -4px 0 16px rgba(0,0,0,0.15);
+    }
+    #sidebar.open { right: 0; }
+    #sidebar-overlay {
+      position: fixed;
+      inset: 48px 0 0 0;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      z-index: 40;
+    }
+    #sidebar-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .handle {
+      width: 18px;
+      height: 18px;
+    }
+    .handle.scale.nw { left: -9px !important; top: -9px !important; }
+    .handle.scale.ne { right: -9px !important; top: -9px !important; }
+    .handle.scale.sw { left: -9px !important; bottom: -9px !important; }
+    .handle.scale.se { right: -9px !important; bottom: -9px !important; }
+    .handle.rotate { top: -38px !important; }
+    #canvas-empty-state .empty-headline { font-size: 16px; }
+    #canvas-empty-state .panel-art {
+      width: 64px; height: 64px;
+    }
+    #canvas-empty-state .panel-art svg {
+      width: 48px; height: 48px;
+    }
+    #canvas-empty-state .panel-caption { font-size: 11px; }
+    .margin-label { font-size: 12px; }
+  }
+
   #empty {
     grid-column: 1 / -1;
     text-align: center;
@@ -545,6 +625,13 @@
       </svg>
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+      </svg>
+    </button>
+    <button id="sidebar-toggle" class="icon-btn" title="ライブラリを開く">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
       </svg>
     </button>
     <span class="spacer"></span>
@@ -833,6 +920,7 @@
     </div>
   </div>
 
+  <div id="sidebar-overlay"></div>
   <div id="sidebar">
     <h2>ライブラリ</h2>
     <div id="library">
@@ -1194,43 +1282,94 @@ function render() {
 // ========= 操作（ドラッグ・スケール・回転） =========
 let drag = null;
 
-$canvas.addEventListener('mousedown', (e) => {
-  const handleEl = e.target.closest('.handle');
-  const stickerEl = e.target.closest('.sticker');
-  if (!stickerEl) { selectedId = null; render(); return; }
-  const id = Number(stickerEl.dataset.id);
-  const s = stickers.find(x => x.id === id);
-  if (!s) return;
+// ========= ポインター操作（マウス・タッチ統一） =========
+const activePointers = new Map(); // pointerId → {clientX, clientY}
+let pinch = null;
 
-  if (selectedId !== id) { selectedId = id; render(); }
+$canvas.addEventListener('pointerdown', onPointerDown);
+window.addEventListener('pointermove', onPointerMove);
+window.addEventListener('pointerup', onPointerUp);
+window.addEventListener('pointercancel', onPointerUp);
 
-  const wrapRect = $wrap.getBoundingClientRect();
-  const startMouse = {
-    x: (e.clientX - wrapRect.left) / displayScale,
-    y: (e.clientY - wrapRect.top) / displayScale
-  };
+function onPointerDown(e) {
+  activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
 
-  // 操作開始時に履歴へ積む（実際にドラッグで変更が起きた場合のみ確定）
-  pushUndo();
+  if (activePointers.size === 1) {
+    // 第1ポインター: 通常のドラッグ/選択
+    const handleEl = e.target.closest('.handle');
+    const stickerEl = e.target.closest('.sticker');
+    if (!stickerEl) { selectedId = null; render(); return; }
+    const id = Number(stickerEl.dataset.id);
+    const s = stickers.find(x => x.id === id);
+    if (!s) return;
 
-  if (handleEl) {
-    const type = handleEl.dataset.handle;
-    if (type === 'rot') {
-      drag = { type: 'rotate', s, startRot: s.rot, cx: s.x + s.w/2, cy: s.y + s.h/2,
-               startAngle: Math.atan2(startMouse.y - (s.y + s.h/2), startMouse.x - (s.x + s.w/2)),
-               moved: false };
+    if (selectedId !== id) { selectedId = id; render(); }
+
+    const wrapRect = $wrap.getBoundingClientRect();
+    const startMouse = {
+      x: (e.clientX - wrapRect.left) / displayScale,
+      y: (e.clientY - wrapRect.top) / displayScale
+    };
+
+    pushUndo();
+
+    if (handleEl) {
+      const type = handleEl.dataset.handle;
+      if (type === 'rot') {
+        drag = { type: 'rotate', s, startRot: s.rot, cx: s.x + s.w/2, cy: s.y + s.h/2,
+                 startAngle: Math.atan2(startMouse.y - (s.y + s.h/2), startMouse.x - (s.x + s.w/2)),
+                 moved: false };
+      } else {
+        drag = { type: 'scale', s, corner: type,
+                 startX: s.x, startY: s.y, startW: s.w, startH: s.h,
+                 aspect: s.w / s.h, startMouse, moved: false };
+      }
     } else {
-      drag = { type: 'scale', s, corner: type,
-               startX: s.x, startY: s.y, startW: s.w, startH: s.h,
-               aspect: s.w / s.h, startMouse, moved: false };
+      drag = { type: 'move', s, offsetX: startMouse.x - s.x, offsetY: startMouse.y - s.y, moved: false };
     }
-  } else {
-    drag = { type: 'move', s, offsetX: startMouse.x - s.x, offsetY: startMouse.y - s.y, moved: false };
+    e.preventDefault();
+  } else if (activePointers.size === 2 && selectedId != null) {
+    // 第2ポインター: ピンチ・回転モードへ
+    const s = stickers.find(x => x.id === selectedId);
+    if (!s) return;
+    const ids = Array.from(activePointers.keys()).slice(0, 2);
+    const p1 = activePointers.get(ids[0]);
+    const p2 = activePointers.get(ids[1]);
+    const dist = Math.hypot(p2.clientX - p1.clientX, p2.clientY - p1.clientY) || 1;
+    const angle = Math.atan2(p2.clientY - p1.clientY, p2.clientX - p1.clientX);
+    pinch = {
+      s,
+      startW: s.w, startH: s.h, startRot: s.rot,
+      cx: s.x + s.w / 2, cy: s.y + s.h / 2,
+      startDist: dist, startAngle: angle
+    };
+    if (drag) drag.moved = true; // pushUndoを保持
+    e.preventDefault();
   }
-  e.preventDefault();
-});
+}
 
-window.addEventListener('mousemove', (e) => {
+function onPointerMove(e) {
+  if (!activePointers.has(e.pointerId)) return;
+  activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+
+  if (pinch && activePointers.size >= 2) {
+    const ids = Array.from(activePointers.keys()).slice(0, 2);
+    const p1 = activePointers.get(ids[0]);
+    const p2 = activePointers.get(ids[1]);
+    const dist = Math.hypot(p2.clientX - p1.clientX, p2.clientY - p1.clientY) || 1;
+    const angle = Math.atan2(p2.clientY - p1.clientY, p2.clientX - p1.clientX);
+    const scale = dist / pinch.startDist;
+    const rotDelta = (angle - pinch.startAngle) * 180 / Math.PI;
+    const s = pinch.s;
+    s.w = Math.max(20, pinch.startW * scale);
+    s.h = Math.max(20, pinch.startH * scale);
+    s.rot = pinch.startRot + rotDelta;
+    s.x = pinch.cx - s.w / 2;
+    s.y = pinch.cy - s.h / 2;
+    render();
+    return;
+  }
+
   if (!drag) return;
   const wrapRect = $wrap.getBoundingClientRect();
   const mx = (e.clientX - wrapRect.left) / displayScale;
@@ -1247,19 +1386,14 @@ window.addEventListener('mousemove', (e) => {
     if (e.shiftKey) deg = Math.round(deg / 15) * 15;
     s.rot = deg;
   } else if (drag.type === 'scale') {
-    // 回転を考慮した対角スケール
     const cx = drag.startX + drag.startW / 2;
     const cy = drag.startY + drag.startH / 2;
     const rad = -s.rot * Math.PI / 180;
-    // マウス位置を回転前の座標系に変換
     const dx = mx - cx, dy = my - cy;
     const lx = dx * Math.cos(rad) - dy * Math.sin(rad);
     const ly = dx * Math.sin(rad) + dy * Math.cos(rad);
-    let signX = drag.corner.includes('e') ? 1 : -1;
-    let signY = drag.corner.includes('s') ? 1 : -1;
     let newW = Math.abs(lx) * 2;
     let newH = Math.abs(ly) * 2;
-    // アスペクト維持（Shift押下時は自由変形）
     if (!e.shiftKey) {
       const r = Math.max(newW / drag.startW, newH / drag.startH);
       newW = drag.startW * r;
@@ -1272,15 +1406,24 @@ window.addEventListener('mousemove', (e) => {
     s.y = cy - newH / 2;
   }
   render();
-});
+}
 
-window.addEventListener('mouseup', () => {
-  if (drag && !drag.moved) {
-    // 実際には何も動かさなかった → 履歴を戻す（クリックだけで履歴を汚さない）
-    if (undoStack.length > 0) { undoStack.pop(); updateUndoButtons(); }
+function onPointerUp(e) {
+  activePointers.delete(e.pointerId);
+
+  if (pinch && activePointers.size < 2) {
+    pinch = null;
+    drag = null; // ピンチ終了後の片手dragは無効化（誤操作防止）
+    return;
   }
-  drag = null;
-});
+
+  if (activePointers.size === 0 && drag) {
+    if (!drag.moved) {
+      if (undoStack.length > 0) { undoStack.pop(); updateUndoButtons(); }
+    }
+    drag = null;
+  }
+}
 
 // ========= キーボード =========
 let arrowUndoTimer = null;
@@ -1549,6 +1692,16 @@ function toggleTheme() {
   localStorage.setItem(THEME_KEY, next);
 }
 document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+// ========= サイドバー（モバイルドロワー） =========
+const $sidebarOverlay = document.getElementById('sidebar-overlay');
+function toggleSidebar(force) {
+  const open = force === undefined ? !$sidebar.classList.contains('open') : force;
+  $sidebar.classList.toggle('open', open);
+  $sidebarOverlay.classList.toggle('open', open);
+}
+document.getElementById('sidebar-toggle').addEventListener('click', () => toggleSidebar());
+$sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
 // OS設定の変化に追従（ユーザーが localStorage に明示保存していない場合のみ）
 matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
   if (localStorage.getItem(THEME_KEY)) return;
