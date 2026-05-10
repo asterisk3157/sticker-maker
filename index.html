@@ -1155,6 +1155,12 @@ function renderLibrary() {
       e.dataTransfer.setData('text/sticker-lib-id', String(item.id));
       e.dataTransfer.effectAllowed = 'copy';
     });
+    // タップ/クリックで中央配置（モバイルはHTML5 dragが動かないため）
+    div.addEventListener('click', (e) => {
+      if (e.target.closest('.del')) return;
+      addSticker(item, canvasW / 2, canvasH / 2);
+      if (window.innerWidth <= 720) toggleSidebar(false);
+    });
     div.querySelector('.del').addEventListener('click', (e) => {
       e.stopPropagation();
       const idx = library.indexOf(item);
