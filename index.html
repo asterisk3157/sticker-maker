@@ -126,7 +126,8 @@
     pointer-events: none;
     text-align: center;
     z-index: 6;
-    gap: 18px;
+    gap: 22px;
+    padding: 20px;
   }
   #canvas-empty-state.hidden { display: none; }
   #canvas-empty-state .empty-headline {
@@ -135,27 +136,65 @@
     color: #555;
     letter-spacing: 0.5px;
   }
-  #canvas-empty-state .empty-steps {
+  #canvas-empty-state .empty-panels {
     display: flex;
-    gap: 14px;
-    font-size: 14px;
-    color: #888;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
     justify-content: center;
-    max-width: 80%;
+    max-width: 100%;
   }
-  #canvas-empty-state .empty-steps .step-num {
+  #canvas-empty-state .panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+  #canvas-empty-state .panel-art {
+    width: 84px;
+    height: 84px;
+    background: #fff;
+    border: 1px solid #d8d8d8;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  #canvas-empty-state .panel-art svg {
+    width: 56px; height: 56px;
+  }
+  #canvas-empty-state .panel-caption {
+    font-size: 12px;
+    color: #555;
+    text-align: center;
+    line-height: 1.4;
+    max-width: 100px;
+  }
+  #canvas-empty-state .panel-caption .step-num {
     display: inline-block;
-    width: 22px; height: 22px;
-    line-height: 22px; text-align: center;
+    width: 18px; height: 18px;
+    line-height: 18px; text-align: center;
     background: #3FB8A6; color: #fff;
     border-radius: 50%;
-    font-size: 12px; font-weight: 700;
-    margin-right: 6px;
-    vertical-align: middle;
+    font-size: 11px; font-weight: 700;
+    margin-right: 4px;
+    vertical-align: 1px;
   }
   #canvas-empty-state .empty-arrow {
-    color: #ccc; font-weight: 700;
+    color: #bbb; font-weight: 700; font-size: 18px;
+    flex: 0 0 auto;
+  }
+  /* モバイル: 縦積み */
+  @media (max-width: 720px) {
+    #canvas-empty-state .empty-panels {
+      flex-direction: column;
+      gap: 4px;
+    }
+    #canvas-empty-state .empty-arrow {
+      transform: rotate(90deg);
+    }
   }
   #print-area::after {
     content: '';
@@ -412,7 +451,7 @@
   <div class="modal-bg" id="calib-modal">
     <div class="modal">
       <h3>画面サイズを合わせる</h3>
-      <p>「実物大で見る」を正確に動かすための1回限りの設定です。クレジットカード（または同サイズの定期券・運転免許証など）を画面の青い枠に当てて、ぴったり重なるようスライダーを調整してください。</p>
+      <p>クレジットカードを画面に当てて、青い枠と重なる位置までスライダーを動かしてください。一度だけの設定です。</p>
       <div class="card-area">
         <div class="calib-card" id="calib-card"></div>
       </div>
@@ -438,12 +477,245 @@
       <div class="margin-label margin-label-bottom">切り取り範囲の目安</div>
       <div id="canvas-empty-state">
         <div class="empty-headline">ここに画像を並べよう</div>
-        <div class="empty-steps">
-          <span><span class="step-num">1</span>画像を追加</span>
+        <div class="empty-panels">
+          <div class="panel">
+            <div class="panel-art">
+              <svg viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true">
+                <!-- 写真フレーム -->
+                <rect x="3" y="6" width="20" height="18" fill="#A8E8DD"/>
+                <rect x="3" y="6" width="20" height="1" fill="#3FB8A6"/>
+                <rect x="3" y="23" width="20" height="1" fill="#3FB8A6"/>
+                <rect x="3" y="6" width="1" height="18" fill="#3FB8A6"/>
+                <rect x="22" y="6" width="1" height="18" fill="#3FB8A6"/>
+                <!-- 太陽 -->
+                <rect x="6" y="9" width="3" height="3" fill="#FFD9E8"/>
+                <!-- 山 -->
+                <rect x="5" y="20" width="2" height="3" fill="#3FB8A6"/>
+                <rect x="6" y="18" width="2" height="5" fill="#3FB8A6"/>
+                <rect x="7" y="16" width="2" height="7" fill="#3FB8A6"/>
+                <rect x="8" y="14" width="2" height="9" fill="#3FB8A6"/>
+                <rect x="9" y="12" width="2" height="11" fill="#3FB8A6"/>
+                <rect x="10" y="14" width="2" height="9" fill="#3FB8A6"/>
+                <rect x="11" y="16" width="2" height="7" fill="#3FB8A6"/>
+                <rect x="12" y="18" width="2" height="5" fill="#3FB8A6"/>
+                <rect x="13" y="16" width="2" height="7" fill="#3FB8A6"/>
+                <rect x="14" y="14" width="2" height="9" fill="#3FB8A6"/>
+                <rect x="15" y="12" width="2" height="11" fill="#3FB8A6"/>
+                <rect x="16" y="10" width="2" height="13" fill="#3FB8A6"/>
+                <rect x="17" y="13" width="2" height="10" fill="#3FB8A6"/>
+                <rect x="18" y="16" width="2" height="7" fill="#3FB8A6"/>
+                <rect x="19" y="19" width="2" height="4" fill="#3FB8A6"/>
+                <!-- + マーク -->
+                <rect x="22" y="3" width="7" height="3" fill="#FF8FA3"/>
+                <rect x="24" y="1" width="3" height="7" fill="#FF8FA3"/>
+              </svg>
+            </div>
+            <div class="panel-caption"><span class="step-num">1</span>画像を追加</div>
+          </div>
           <span class="empty-arrow">→</span>
-          <span><span class="step-num">2</span>ドラッグして並べる</span>
+          <div class="panel">
+            <div class="panel-art">
+              <svg viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true">
+                <!-- 紙の枠 -->
+                <rect x="2" y="6" width="28" height="20" fill="#FFFFFF"/>
+                <rect x="2" y="6" width="28" height="1" fill="#cccccc"/>
+                <rect x="2" y="25" width="28" height="1" fill="#cccccc"/>
+                <rect x="2" y="6" width="1" height="20" fill="#cccccc"/>
+                <rect x="29" y="6" width="1" height="20" fill="#cccccc"/>
+
+                <!-- ① ハート (x=3-7, y=8-12) -->
+                <rect x="4" y="8" width="1" height="1" fill="#FF6B8A"/>
+                <rect x="6" y="8" width="1" height="1" fill="#FF6B8A"/>
+                <rect x="3" y="9" width="5" height="2" fill="#FF6B8A"/>
+                <rect x="4" y="11" width="3" height="1" fill="#FF6B8A"/>
+                <rect x="5" y="12" width="1" height="1" fill="#FF6B8A"/>
+
+                <!-- ② スター (x=10-14, y=8-12) -->
+                <rect x="12" y="8" width="1" height="1" fill="#FFC93D"/>
+                <rect x="10" y="9" width="5" height="1" fill="#FFC93D"/>
+                <rect x="11" y="10" width="3" height="1" fill="#FFC93D"/>
+                <rect x="10" y="11" width="2" height="1" fill="#FFC93D"/>
+                <rect x="13" y="11" width="2" height="1" fill="#FFC93D"/>
+                <rect x="10" y="12" width="1" height="1" fill="#FFC93D"/>
+                <rect x="14" y="12" width="1" height="1" fill="#FFC93D"/>
+
+                <!-- ③ スマイリー (x=17-21, y=8-12) -->
+                <rect x="18" y="8" width="3" height="1" fill="#FFC93D"/>
+                <rect x="17" y="9" width="5" height="3" fill="#FFC93D"/>
+                <rect x="18" y="12" width="3" height="1" fill="#FFC93D"/>
+                <rect x="18" y="9" width="1" height="1" fill="#3D2727"/>
+                <rect x="20" y="9" width="1" height="1" fill="#3D2727"/>
+                <rect x="18" y="11" width="3" height="1" fill="#3D2727"/>
+
+                <!-- ④ ドロップ (x=24-28, y=8-12) -->
+                <rect x="26" y="8" width="1" height="1" fill="#A8E8DD"/>
+                <rect x="25" y="9" width="3" height="1" fill="#A8E8DD"/>
+                <rect x="24" y="10" width="5" height="2" fill="#A8E8DD"/>
+                <rect x="25" y="12" width="3" height="1" fill="#A8E8DD"/>
+                <rect x="26" y="10" width="1" height="1" fill="#FFFFFF"/>
+
+                <!-- ⑤ ねこ (x=3-7, y=15-19) -->
+                <rect x="3" y="15" width="1" height="1" fill="#FFB89A"/>
+                <rect x="7" y="15" width="1" height="1" fill="#FFB89A"/>
+                <rect x="3" y="16" width="5" height="3" fill="#FFB89A"/>
+                <rect x="4" y="19" width="3" height="1" fill="#FFB89A"/>
+                <rect x="4" y="17" width="1" height="1" fill="#3D2727"/>
+                <rect x="6" y="17" width="1" height="1" fill="#3D2727"/>
+
+                <!-- ⑥ 音符 (x=10-14, y=15-19) -->
+                <rect x="12" y="15" width="3" height="1" fill="#FF6B8A"/>
+                <rect x="12" y="16" width="1" height="3" fill="#FF6B8A"/>
+                <rect x="10" y="18" width="2" height="2" fill="#FF6B8A"/>
+
+                <!-- ⑦ 花 (x=17-21, y=15-19) -->
+                <rect x="18" y="15" width="3" height="1" fill="#FF6B8A"/>
+                <rect x="17" y="16" width="5" height="3" fill="#FF6B8A"/>
+                <rect x="18" y="19" width="3" height="1" fill="#FF6B8A"/>
+                <rect x="19" y="17" width="1" height="1" fill="#FFD93D"/>
+
+                <!-- ⑧ ドラッグ中の雷 (x=24-28, y=15-19) -->
+                <g opacity="0.55">
+                  <rect x="26" y="15" width="3" height="1" fill="#FFC93D"/>
+                  <rect x="26" y="16" width="2" height="1" fill="#FFC93D"/>
+                  <rect x="25" y="17" width="4" height="1" fill="#FFC93D"/>
+                  <rect x="25" y="18" width="2" height="1" fill="#FFC93D"/>
+                  <rect x="25" y="19" width="1" height="1" fill="#FFC93D"/>
+                </g>
+
+                <!-- カーソル -->
+                <rect x="27" y="17" width="1" height="4" fill="#333"/>
+                <rect x="28" y="18" width="1" height="3" fill="#333"/>
+                <rect x="29" y="19" width="1" height="2" fill="#333"/>
+              </svg>
+            </div>
+            <div class="panel-caption"><span class="step-num">2</span>ドラッグして並べる</div>
+          </div>
           <span class="empty-arrow">→</span>
-          <span><span class="step-num">3</span>印刷用に保存</span>
+          <div class="panel">
+            <div class="panel-art">
+              <svg viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true">
+                <!-- 中央のステッカー -->
+                <rect x="10" y="12" width="12" height="12" fill="#A8E8DD"/>
+                <rect x="10" y="12" width="12" height="1" fill="#3FB8A6"/>
+                <rect x="10" y="23" width="12" height="1" fill="#3FB8A6"/>
+                <rect x="10" y="12" width="1" height="12" fill="#3FB8A6"/>
+                <rect x="21" y="12" width="1" height="12" fill="#3FB8A6"/>
+                <!-- 角ハンドル -->
+                <rect x="9" y="11" width="2" height="2" fill="#FF8FA3"/>
+                <rect x="21" y="11" width="2" height="2" fill="#FF8FA3"/>
+                <rect x="9" y="23" width="2" height="2" fill="#FF8FA3"/>
+                <rect x="21" y="23" width="2" height="2" fill="#FF8FA3"/>
+                <!-- 回転ハンドル（上） -->
+                <rect x="15" y="6" width="2" height="2" fill="#FF8FA3"/>
+                <rect x="16" y="8" width="0.5" height="3" fill="#FF8FA3"/>
+                <!-- 回転矢印 -->
+                <rect x="20" y="3" width="3" height="1" fill="#FF8FA3"/>
+                <rect x="22" y="2" width="1" height="3" fill="#FF8FA3"/>
+                <rect x="23" y="3" width="1" height="3" fill="#FF8FA3"/>
+                <rect x="24" y="4" width="1" height="3" fill="#FF8FA3"/>
+                <rect x="25" y="6" width="1" height="3" fill="#FF8FA3"/>
+              </svg>
+            </div>
+            <div class="panel-caption"><span class="step-num">3</span>大きさや回転を調整</div>
+          </div>
+          <span class="empty-arrow">→</span>
+          <div class="panel">
+            <div class="panel-art">
+              <svg viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true">
+                <!-- 紙 -->
+                <rect x="3" y="4" width="26" height="18" fill="#FFFFFF"/>
+                <rect x="3" y="4" width="26" height="1" fill="#3FB8A6"/>
+                <rect x="3" y="21" width="26" height="1" fill="#3FB8A6"/>
+                <rect x="3" y="4" width="1" height="18" fill="#3FB8A6"/>
+                <rect x="28" y="4" width="1" height="18" fill="#3FB8A6"/>
+
+                <!-- Row 1 (y=5-9) -->
+                <!-- ハート -->
+                <rect x="5" y="5" width="1" height="1" fill="#FF6B8A"/>
+                <rect x="7" y="5" width="1" height="1" fill="#FF6B8A"/>
+                <rect x="4" y="6" width="5" height="2" fill="#FF6B8A"/>
+                <rect x="5" y="8" width="3" height="1" fill="#FF6B8A"/>
+                <rect x="6" y="9" width="1" height="1" fill="#FF6B8A"/>
+                <!-- スター -->
+                <rect x="12" y="5" width="1" height="1" fill="#FFC93D"/>
+                <rect x="10" y="6" width="5" height="1" fill="#FFC93D"/>
+                <rect x="11" y="7" width="3" height="1" fill="#FFC93D"/>
+                <rect x="10" y="8" width="2" height="1" fill="#FFC93D"/>
+                <rect x="13" y="8" width="2" height="1" fill="#FFC93D"/>
+                <rect x="10" y="9" width="1" height="1" fill="#FFC93D"/>
+                <rect x="14" y="9" width="1" height="1" fill="#FFC93D"/>
+                <!-- スマイリー -->
+                <rect x="17" y="5" width="3" height="1" fill="#FFC93D"/>
+                <rect x="16" y="6" width="5" height="3" fill="#FFC93D"/>
+                <rect x="17" y="9" width="3" height="1" fill="#FFC93D"/>
+                <rect x="17" y="6" width="1" height="1" fill="#3D2727"/>
+                <rect x="19" y="6" width="1" height="1" fill="#3D2727"/>
+                <rect x="17" y="8" width="3" height="1" fill="#3D2727"/>
+                <!-- ドロップ -->
+                <rect x="24" y="5" width="1" height="1" fill="#A8E8DD"/>
+                <rect x="23" y="6" width="3" height="1" fill="#A8E8DD"/>
+                <rect x="22" y="7" width="5" height="2" fill="#A8E8DD"/>
+                <rect x="23" y="9" width="3" height="1" fill="#A8E8DD"/>
+                <rect x="24" y="7" width="1" height="1" fill="#FFFFFF"/>
+
+                <!-- Row 2 (y=11-15) -->
+                <!-- ねこ -->
+                <rect x="4" y="11" width="1" height="1" fill="#FFB89A"/>
+                <rect x="8" y="11" width="1" height="1" fill="#FFB89A"/>
+                <rect x="4" y="12" width="5" height="3" fill="#FFB89A"/>
+                <rect x="5" y="15" width="3" height="1" fill="#FFB89A"/>
+                <rect x="5" y="13" width="1" height="1" fill="#3D2727"/>
+                <rect x="7" y="13" width="1" height="1" fill="#3D2727"/>
+                <!-- 音符 -->
+                <rect x="13" y="11" width="3" height="1" fill="#FF6B8A"/>
+                <rect x="13" y="12" width="1" height="3" fill="#FF6B8A"/>
+                <rect x="11" y="14" width="2" height="2" fill="#FF6B8A"/>
+                <!-- 花 -->
+                <rect x="17" y="11" width="3" height="1" fill="#FF6B8A"/>
+                <rect x="16" y="12" width="5" height="3" fill="#FF6B8A"/>
+                <rect x="17" y="15" width="3" height="1" fill="#FF6B8A"/>
+                <rect x="18" y="13" width="1" height="1" fill="#FFD93D"/>
+                <!-- 雷 -->
+                <rect x="24" y="11" width="3" height="1" fill="#FFC93D"/>
+                <rect x="24" y="12" width="2" height="1" fill="#FFC93D"/>
+                <rect x="23" y="13" width="4" height="1" fill="#FFC93D"/>
+                <rect x="23" y="14" width="2" height="1" fill="#FFC93D"/>
+                <rect x="23" y="15" width="1" height="1" fill="#FFC93D"/>
+
+                <!-- Row 3 (y=17-21) -->
+                <!-- 王冠 -->
+                <rect x="4" y="17" width="1" height="1" fill="#F5A623"/>
+                <rect x="6" y="17" width="1" height="1" fill="#F5A623"/>
+                <rect x="8" y="17" width="1" height="1" fill="#F5A623"/>
+                <rect x="4" y="18" width="5" height="3" fill="#F5A623"/>
+                <rect x="6" y="19" width="1" height="1" fill="#FFD93D"/>
+                <!-- きらきら（4方向スパーク） -->
+                <rect x="12" y="17" width="1" height="1" fill="#FFD93D"/>
+                <rect x="11" y="18" width="3" height="1" fill="#FFD93D"/>
+                <rect x="10" y="19" width="5" height="1" fill="#FFD93D"/>
+                <rect x="11" y="20" width="3" height="1" fill="#FFD93D"/>
+                <rect x="12" y="21" width="1" height="1" fill="#FFD93D"/>
+                <!-- 吹き出し -->
+                <rect x="17" y="17" width="3" height="1" fill="#FFD9E8"/>
+                <rect x="16" y="18" width="5" height="2" fill="#FFD9E8"/>
+                <rect x="17" y="20" width="3" height="1" fill="#FFD9E8"/>
+                <rect x="18" y="21" width="1" height="1" fill="#FFD9E8"/>
+                <!-- きのこ -->
+                <rect x="23" y="17" width="3" height="1" fill="#E53E3E"/>
+                <rect x="22" y="18" width="5" height="2" fill="#E53E3E"/>
+                <rect x="23" y="18" width="1" height="1" fill="#FFFFFF"/>
+                <rect x="25" y="19" width="1" height="1" fill="#FFFFFF"/>
+                <rect x="23" y="20" width="3" height="2" fill="#F5DBC3"/>
+
+                <!-- ダウンロード矢印 -->
+                <rect x="15" y="24" width="2" height="4" fill="#FF8FA3"/>
+                <rect x="13" y="27" width="6" height="1" fill="#FF8FA3"/>
+                <rect x="14" y="28" width="4" height="1" fill="#FF8FA3"/>
+                <rect x="15" y="29" width="2" height="1" fill="#FF8FA3"/>
+              </svg>
+            </div>
+            <div class="panel-caption"><span class="step-num">4</span>印刷用に保存</div>
+          </div>
         </div>
       </div>
       <div id="canvas"></div>
