@@ -1,0 +1,83 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景グラデーション -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0FAF7"/>
+      <stop offset="100%" stop-color="#D6F0E9"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- 装飾ドット -->
+  <circle cx="120"  cy="120" r="12" fill="#3FB8A6" opacity="0.18"/>
+  <circle cx="1080" cy="90"  r="16" fill="#FF8FA3" opacity="0.20"/>
+  <circle cx="80"   cy="500" r="10" fill="#FFD9E8" opacity="0.50"/>
+  <circle cx="1130" cy="540" r="14" fill="#A8E8DD" opacity="0.55"/>
+  <circle cx="200"  cy="380" r="6"  fill="#3FB8A6" opacity="0.25"/>
+  <circle cx="1000" cy="380" r="6"  fill="#FF8FA3" opacity="0.25"/>
+
+  <!-- ドロップキャンディーをピクセルアートで（favicon を 30倍に拡大） -->
+  <g transform="translate(540, 60) scale(7.5)" shape-rendering="crispEdges">
+    <!-- 本体ベース -->
+    <rect x="7" y="1" width="2" height="1" fill="#A8E8DD"/>
+    <rect x="6" y="2" width="4" height="1" fill="#A8E8DD"/>
+    <rect x="6" y="3" width="4" height="1" fill="#A8E8DD"/>
+    <rect x="5" y="4" width="6" height="1" fill="#A8E8DD"/>
+    <rect x="4" y="5" width="8" height="1" fill="#A8E8DD"/>
+    <rect x="3" y="6" width="10" height="1" fill="#A8E8DD"/>
+    <rect x="3" y="7" width="10" height="4" fill="#A8E8DD"/>
+    <rect x="3" y="11" width="10" height="1" fill="#A8E8DD"/>
+    <rect x="4" y="12" width="8" height="1" fill="#A8E8DD"/>
+    <rect x="5" y="13" width="6" height="1" fill="#A8E8DD"/>
+    <rect x="6" y="14" width="4" height="1" fill="#A8E8DD"/>
+    <!-- アウトライン -->
+    <rect x="7" y="1" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="6" y="2" width="1" height="2" fill="#3FB8A6"/>
+    <rect x="5" y="4" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="4" y="5" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="3" y="6" width="1" height="6" fill="#3FB8A6"/>
+    <rect x="4" y="12" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="5" y="13" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="6" y="14" width="2" height="1" fill="#3FB8A6"/>
+    <rect x="8" y="1" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="9" y="2" width="1" height="2" fill="#3FB8A6"/>
+    <rect x="10" y="4" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="11" y="5" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="12" y="6" width="1" height="6" fill="#3FB8A6"/>
+    <rect x="11" y="12" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="10" y="13" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="8" y="14" width="2" height="1" fill="#3FB8A6"/>
+    <!-- たまり -->
+    <rect x="5" y="11" width="6" height="1" fill="#7AD3C4"/>
+    <rect x="5" y="12" width="6" height="1" fill="#7AD3C4"/>
+    <rect x="6" y="13" width="4" height="1" fill="#7AD3C4"/>
+    <rect x="4" y="12" width="1" height="1" fill="#3FB8A6"/>
+    <rect x="11" y="12" width="1" height="1" fill="#3FB8A6"/>
+    <!-- 内側ピンク -->
+    <rect x="7" y="8" width="2" height="2" fill="#FFD9E8"/>
+    <!-- ハイライト -->
+    <rect x="6" y="4" width="2" height="1" fill="#FFFFFF"/>
+    <rect x="5" y="5" width="1" height="1" fill="#FFFFFF"/>
+    <rect x="5" y="6" width="1" height="2" fill="#FFFFFF"/>
+    <rect x="6" y="5" width="1" height="1" fill="#FFFFFF"/>
+    <rect x="10" y="10" width="1" height="1" fill="#FFFFFF"/>
+  </g>
+
+  <!-- タイトル -->
+  <text x="600" y="380" text-anchor="middle"
+    font-family="Hiragino Sans, Hiragino Kaku Gothic ProN, sans-serif"
+    font-size="80" font-weight="700" fill="#1F4F4A" letter-spacing="2">すてっかーめーかー</text>
+
+  <!-- タグライン -->
+  <text x="600" y="450" text-anchor="middle"
+    font-family="Hiragino Sans, sans-serif"
+    font-size="30" fill="#3F7F76">2L判ステッカーを、ブラウザでサクッと。</text>
+  <text x="600" y="495" text-anchor="middle"
+    font-family="Hiragino Sans, sans-serif"
+    font-size="30" fill="#3F7F76">あとはコンビニで印刷するだけ。</text>
+
+  <!-- URL -->
+  <text x="1160" y="600" text-anchor="end"
+    font-family="ui-monospace, monospace"
+    font-size="22" fill="#5D8A82">sticker-maker.shironoir.com</text>
+</svg>
