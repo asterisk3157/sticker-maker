@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使い方 - すてっかーめーかー</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="description" content="すてっかーめーかーの使い方ガイド。画像を並べてコンビニで2L判ステッカーを印刷する方法を紹介。">
+<meta name="theme-color" content="#3FB8A6">
+
+<!-- 初回描画前にテーマを確定 -->
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('theme');
+      var theme = (saved === 'light' || saved === 'dark')
+        ? saved
+        : (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.dataset.theme = theme;
+    } catch (e) {}
+  })();
+</script>
+
+<style>
+  :root {
+    --bg-app: #1e1e22;
+    --bg-card: #2a2a2f;
+    --bg-elevated: #1a1a1e;
+    --bg-button: #3a3a42;
+    --bg-button-hover: #4a4a52;
+    --text-primary: #e8e8ea;
+    --text-secondary: #a0a0a8;
+    --text-muted: #777;
+    --border: #3a3a40;
+    --accent-brand: #3FB8A6;
+    --accent-brand-hover: #4DCEBA;
+    --accent-highlight: #4a7cfa;
+    --paper: #fff;
+    color-scheme: dark;
+  }
+  [data-theme="light"] {
+    --bg-app: #f5f5f7;
+    --bg-card: #ffffff;
+    --bg-elevated: #f0f0f3;
+    --bg-button: #e5e5ea;
+    --bg-button-hover: #d5d5da;
+    --text-primary: #1c1c1e;
+    --text-secondary: #4a4a52;
+    --text-muted: #6e6e73;
+    --border: #d1d1d6;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+  }
+  header .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  header .brand img { width: 24px; height: 24px; }
+  header a.cta {
+    background: var(--accent-brand);
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: background 0.15s;
+  }
+  header a.cta:hover { background: var(--accent-brand-hover); }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 32px 0 56px;
+  }
+  .hero h1 {
+    font-size: 36px;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 540px;
+    margin: 0 auto 28px;
+  }
+  .hero .cta-large {
+    display: inline-block;
+    background: var(--accent-brand);
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .hero .cta-large:hover { background: var(--accent-brand-hover); transform: translateY(-1px); }
+
+  section {
+    margin: 56px 0;
+  }
+  section h2 {
+    font-size: 22px;
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+  }
+  section h3 {
+    font-size: 17px;
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+  section p {
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+  }
+  @media (max-width: 540px) { .steps { grid-template-columns: 1fr; } }
+
+  .step-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .step-card .step-num-large {
+    display: inline-block;
+    width: 28px; height: 28px;
+    line-height: 28px;
+    background: var(--accent-brand);
+    color: #fff;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .step-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .step-card p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+
+  .feature-list {
+    list-style: none;
+    padding: 0;
+  }
+  .feature-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list .label {
+    font-weight: 600;
+    min-width: 140px;
+    color: var(--text-primary);
+  }
+  .feature-list .desc {
+    color: var(--text-secondary);
+    flex: 1;
+  }
+  @media (max-width: 540px) {
+    .feature-list li { flex-direction: column; gap: 4px; }
+    .feature-list .label { min-width: 0; }
+  }
+
+  table.shortcuts {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+  table.shortcuts th, table.shortcuts td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  table.shortcuts th {
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  table.shortcuts td:first-child { font-family: ui-monospace, monospace; color: var(--text-primary); }
+  table.shortcuts td:last-child { color: var(--text-secondary); }
+
+  .faq dt {
+    font-weight: 700;
+    margin-top: 18px;
+    color: var(--text-primary);
+  }
+  .faq dt::before { content: "Q. "; color: var(--accent-brand); }
+  .faq dd {
+    color: var(--text-secondary);
+    margin-top: 6px;
+    margin-left: 20px;
+  }
+
+  .note {
+    background: var(--bg-elevated);
+    border-left: 3px solid var(--accent-brand);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  footer a { color: var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/">
+    <img src="favicon.svg" alt="">
+    <span>すてっかーめーかー</span>
+  </a>
+  <a class="cta" href="/">アプリを開く →</a>
+</header>
+
+<main>
+
+  <div class="hero">
+    <h1>2L判ステッカーを、ブラウザでサクッと。</h1>
+    <p>「ステッカー作りたい！でも2L判に並べるの面倒…」そんな人のお助けツール。お手元の画像をブラウザで並べて1枚にまとめたら、あとはコンビニで印刷するだけ。</p>
+    <a class="cta-large" href="/">アプリを使ってみる</a>
+  </div>
+
+  <section>
+    <h2>使い方の流れ</h2>
+    <p>4ステップで完了します。専用ソフトもアカウント登録もいりません。</p>
+    <div class="steps">
+      <div class="step-card">
+        <span class="step-num-large">1</span>
+        <h4>画像を追加</h4>
+        <p>左上のアイコンから、または右側のサイドバーへ画像をドラッグして追加します。PNG・JPEG・GIF・WebPなど主要な画像形式に対応。</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num-large">2</span>
+        <h4>キャンバスに並べる</h4>
+        <p>サイドバーから2L判のキャンバスへドラッグして配置。複数枚を組み合わせてオリジナルのステッカーシートを作れます。</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num-large">3</span>
+        <h4>大きさや回転を調整</h4>
+        <p>選んだステッカーの四隅をドラッグで拡大縮小、上のハンドルで回転。位置はマウスドラッグや矢印キーで微調整できます。</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num-large">4</span>
+        <h4>印刷用に保存</h4>
+        <p>「印刷用に保存」ボタンで300DPIのJPEG画像としてダウンロード。あとはお好きなコンビニのマルチコピー機で印刷するだけ。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>機能の紹介</h2>
+    <ul class="feature-list">
+      <li>
+        <span class="label">自動保存</span>
+        <span class="desc">配置内容と読み込んだ画像はブラウザのlocalStorageに自動保存されます。閉じて開き直しても続きから作業できます。</span>
+      </li>
+      <li>
+        <span class="label">実物大で見る</span>
+        <span class="desc">ものさしアイコンで実物大表示モードに切替。クレジットカードを画面に当ててサイズを合わせる初回キャリブレーションがあります。</span>
+      </li>
+      <li>
+        <span class="label">切り取り範囲の目安</span>
+        <span class="desc">プレビューの外側に灰色のマージン領域を表示。印刷時に切れる可能性があるため、重要な要素はこの内側に置くのが安全です。</span>
+      </li>
+      <li>
+        <span class="label">縦/横切替</span>
+        <span class="desc">ツールバーの長方形アイコンで紙の向きを切り替えられます。</span>
+      </li>
+      <li>
+        <span class="label">ライト/ダーク切替</span>
+        <span class="desc">右上の太陽/月アイコンで配色を切替。OS設定にも追従します。</span>
+      </li>
+      <li>
+        <span class="label">プライバシー</span>
+        <span class="desc">画像はサーバーに送信されません。すべての処理がブラウザ内で完結します。</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>キーボードショートカット</h2>
+    <table class="shortcuts">
+      <tr><th>キー</th><th>動作</th></tr>
+      <tr><td>Cmd / Ctrl + Z</td><td>元に戻す</td></tr>
+      <tr><td>Cmd / Ctrl + Shift + Z</td><td>やり直し</td></tr>
+      <tr><td>Cmd / Ctrl + C</td><td>選択中ステッカーをコピー</td></tr>
+      <tr><td>Cmd / Ctrl + V</td><td>貼り付け</td></tr>
+      <tr><td>Cmd / Ctrl + D</td><td>複製</td></tr>
+      <tr><td>Delete / Backspace</td><td>選択中ステッカーを削除</td></tr>
+      <tr><td>矢印キー</td><td>1px移動（Shift併用で20px）</td></tr>
+      <tr><td>[ / ]</td><td>重なり順を1段下/上に移動</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>コンビニで印刷する手順</h2>
+    <p>本アプリで作成したJPEG画像を、お住まいの近くのコンビニで2L判印刷できます。</p>
+    <ol style="margin-left: 20px; color: var(--text-secondary);">
+      <li>本アプリで画像を作成し、JPEGをダウンロード</li>
+      <li>お好きなコンビニ印刷サービスのWebサイト（または専用アプリ）にアップロード</li>
+      <li>用紙サイズで「2L判」を選択</li>
+      <li>発行された予約番号やQRコードを使って、コンビニのマルチコピー機で印刷</li>
+    </ol>
+    <div class="note">
+      ※ 利用できる印刷サービス・店舗・料金は各サービスの公式サイトをご確認ください。本アプリは特定の印刷サービスとは無関係の独立プロジェクトです。
+    </div>
+  </section>
+
+  <section>
+    <h2>よくある質問</h2>
+    <dl class="faq">
+      <dt>画像はサーバーに送信されますか？</dt>
+      <dd>送信されません。すべての処理がブラウザ内で行われます。</dd>
+
+      <dt>ブラウザを閉じても作業は残りますか？</dt>
+      <dd>はい。localStorageに自動保存されるので、同じブラウザで開けば続きから作業できます。シークレットウィンドウやブラウザ・端末を変えると引き継げません。</dd>
+
+      <dt>推奨ブラウザは？</dt>
+      <dd>最新版のChrome、Safari、Firefox、Edgeで動作確認しています。</dd>
+
+      <dt>切り取り範囲（灰色のマージン）はどのくらい？</dt>
+      <dd>長辺側に5mm、短辺側に8mmずつ内側に確保しています。重要な要素はこの内側に置くと印刷時の切れを防げます。</dd>
+
+      <dt>2L判以外に対応していますか？</dt>
+      <dd>現在は2L判（127×178mm）のみ対応です。他サイズは今後検討予定です。</dd>
+
+      <dt>透明背景の画像はそのまま印刷できますか？</dt>
+      <dd>JPEGには透過情報がないため、エクスポート時に白背景となります。透過のまま使いたい場合はPNG形式の画像で配置してください（出力はJPEGです）。</dd>
+    </dl>
+  </section>
+
+</main>
+
+<footer>
+  <p><a href="https://github.com/asterisk3157/sticker-maker">ソースコード (GitHub)</a> · MITライセンス</p>
+</footer>
+
+</body>
+</html>
