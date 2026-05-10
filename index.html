@@ -43,16 +43,58 @@
     border-radius: 6px; cursor: pointer; font-size: 13px;
   }
   #toolbar button:hover, #toolbar label.btn:hover { background: #4a4a52; }
-  #toolbar button.primary { background: #4a7cfa; }
-  #toolbar button.primary:hover { background: #5a8cff; }
+  #toolbar button.primary { background: #3FB8A6; }
+  #toolbar button.primary:hover { background: #4DCEBA; }
   #toolbar button.active { background: #4a7cfa; }
   #toolbar button:disabled { opacity: 0.4; cursor: not-allowed; }
   #toolbar .spacer { flex: 1; }
-  #toolbar select {
-    background: #3a3a42; color: #e8e8ea; border: 1px solid #4a4a52;
-    padding: 5px 8px; border-radius: 6px; font-size: 13px;
-  }
   #toolbar .info { font-size: 12px; color: #888; }
+
+  /* アイコンボタン共通 */
+  #toolbar .icon-btn {
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 32px;
+  }
+  #toolbar .icon-btn svg {
+    width: 18px; height: 18px;
+    display: block;
+  }
+  #toolbar button.primary.icon-btn {
+    min-width: 44px;
+    height: 34px;
+  }
+  #toolbar button.primary.icon-btn svg {
+    width: 20px; height: 20px;
+  }
+
+  /* 縦/横トグル */
+  #orientation-group {
+    display: inline-flex;
+    background: #2a2a2f;
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+  }
+  #orientation-group button {
+    background: transparent;
+    color: #888;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+  }
+  #orientation-group button:hover { color: #e8e8ea; }
+  #orientation-group button.active { background: #4a7cfa; color: #fff; }
+  #orientation-group button.active:hover { background: #5a8cff; }
+  #orientation-group button svg { width: 16px; height: 16px; }
 
   #canvas-area {
     background: #15151a;
@@ -73,6 +115,47 @@
     position: absolute;
     background: #fff;
     pointer-events: none;
+  }
+  #canvas-empty-state {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    text-align: center;
+    z-index: 6;
+    gap: 18px;
+  }
+  #canvas-empty-state.hidden { display: none; }
+  #canvas-empty-state .empty-headline {
+    font-size: 22px;
+    font-weight: 600;
+    color: #555;
+    letter-spacing: 0.5px;
+  }
+  #canvas-empty-state .empty-steps {
+    display: flex;
+    gap: 14px;
+    font-size: 14px;
+    color: #888;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 80%;
+  }
+  #canvas-empty-state .empty-steps .step-num {
+    display: inline-block;
+    width: 22px; height: 22px;
+    line-height: 22px; text-align: center;
+    background: #3FB8A6; color: #fff;
+    border-radius: 50%;
+    font-size: 12px; font-weight: 700;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  #canvas-empty-state .empty-arrow {
+    color: #ccc; font-weight: 700;
   }
   #print-area::after {
     content: '';
@@ -144,6 +227,13 @@
     border-left: 1px solid #3a3a40;
     overflow-y: auto;
     padding: 12px;
+    position: relative;
+    transition: background 0.15s;
+  }
+  #sidebar.dragover {
+    background: #2c3540;
+    outline: 2px dashed #4a7cfa;
+    outline-offset: -8px;
   }
   #sidebar h2 { font-size: 12px; color: #888; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
   #library {
@@ -251,26 +341,78 @@
 <div id="app">
   <div id="toolbar">
     <h1>すてっかーめーかー</h1>
-    <label class="btn">PNGインポート<input type="file" id="file-input" accept="image/png,image/jpeg" multiple hidden></label>
-    <select id="orientation">
-      <option value="portrait">縦 (127×178mm)</option>
-      <option value="landscape" selected>横 (178×127mm)</option>
-    </select>
-    <button id="undo-btn" title="元に戻す (Cmd/Ctrl+Z)">↶ 元に戻す</button>
-    <button id="redo-btn" title="やり直す (Cmd/Ctrl+Shift+Z)">↷ やり直す</button>
-    <button id="actual-size-btn" title="画面に実物大で表示">実寸表示</button>
-    <button id="calib-open-btn" title="実寸表示のキャリブレーション設定">実寸設定</button>
-    <button id="clear-btn">配置クリア</button>
+    <label class="btn icon-btn" title="画像を追加">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/>
+        <circle cx="9" cy="9" r="2"/>
+        <path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>
+        <path d="M16 5h6"/>
+        <path d="M19 2v6"/>
+      </svg>
+      <input type="file" id="file-input" accept="image/*" multiple hidden>
+    </label>
+
+    <div id="orientation-group">
+      <button data-orient="portrait" title="縦向き (127×178mm)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1.5"/></svg>
+      </button>
+      <button data-orient="landscape" class="active" title="横向き (178×127mm)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="1.5"/></svg>
+      </button>
+    </div>
+
+    <button id="undo-btn" class="icon-btn" title="元に戻す (Cmd/Ctrl+Z)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 7v6h6"/>
+        <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6.36 2.64L3 13"/>
+      </svg>
+    </button>
+    <button id="redo-btn" class="icon-btn" title="やり直す (Cmd/Ctrl+Shift+Z)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 7v6h-6"/>
+        <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6.36 2.64L21 13"/>
+      </svg>
+    </button>
+    <button id="actual-size-btn" class="icon-btn" title="実物大で見る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="9" width="20" height="6" rx="1"/>
+        <line x1="6" y1="9" x2="6" y2="11.5"/>
+        <line x1="9" y1="9" x2="9" y2="12.5"/>
+        <line x1="12" y1="9" x2="12" y2="11.5"/>
+        <line x1="15" y1="9" x2="15" y2="12.5"/>
+        <line x1="18" y1="9" x2="18" y2="11.5"/>
+      </svg>
+    </button>
+    <button id="calib-open-btn" class="icon-btn" title="画面サイズを合わせる">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+      </svg>
+    </button>
+    <button id="clear-btn" class="icon-btn" title="全部消す">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        <line x1="10" y1="11" x2="10" y2="17"/>
+        <line x1="14" y1="11" x2="14" y2="17"/>
+      </svg>
+    </button>
     <span class="spacer"></span>
     <span class="info" id="save-status"></span>
     <span class="info" id="status">ステッカー: 0</span>
-    <button class="primary" id="export-btn">JPEGエクスポート</button>
+    <button class="primary icon-btn" id="export-btn" title="印刷用に保存">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+    </button>
   </div>
 
   <div class="modal-bg" id="calib-modal">
     <div class="modal">
-      <h3>画面の実寸キャリブレーション</h3>
-      <p>クレジットカード（または同サイズの定期券・運転免許証など）を画面の青い枠に当てて、ぴったり重なるようスライダーを調整してください。</p>
+      <h3>画面サイズを合わせる</h3>
+      <p>「実物大で見る」を正確に動かすための1回限りの設定です。クレジットカード（または同サイズの定期券・運転免許証など）を画面の青い枠に当てて、ぴったり重なるようスライダーを調整してください。</p>
       <div class="card-area">
         <div class="calib-card" id="calib-card"></div>
       </div>
@@ -280,7 +422,7 @@
       </div>
       <div class="actions">
         <button id="calib-cancel">キャンセル</button>
-        <button class="primary" id="calib-save">保存して実寸表示</button>
+        <button class="primary" id="calib-save">保存して実物大で見る</button>
       </div>
       <div class="reset-row">
         <button id="calib-reset" class="danger">設定をリセット</button>
@@ -292,8 +434,18 @@
   <div id="canvas-area">
     <div id="canvas-wrap">
       <div id="print-area"></div>
-      <div class="margin-label margin-label-top">ネットワークプリント・2L目安・この内側に配置してください</div>
-      <div class="margin-label margin-label-bottom">ネットワークプリント・2L目安・この内側に配置してください</div>
+      <div class="margin-label margin-label-top">切り取り範囲の目安</div>
+      <div class="margin-label margin-label-bottom">切り取り範囲の目安</div>
+      <div id="canvas-empty-state">
+        <div class="empty-headline">ここに画像を並べよう</div>
+        <div class="empty-steps">
+          <span><span class="step-num">1</span>画像を追加</span>
+          <span class="empty-arrow">→</span>
+          <span><span class="step-num">2</span>ドラッグして並べる</span>
+          <span class="empty-arrow">→</span>
+          <span><span class="step-num">3</span>印刷用に保存</span>
+        </div>
+      </div>
       <div id="canvas"></div>
     </div>
   </div>
@@ -301,7 +453,7 @@
   <div id="sidebar">
     <h2>ライブラリ</h2>
     <div id="library">
-      <div id="empty">PNGをインポート<br>またはここにドロップ</div>
+      <div id="empty">画像をここにドロップ<br>またはツールバーから追加</div>
     </div>
   </div>
 </div>
@@ -377,8 +529,6 @@ function loadSaved() {
     const state = JSON.parse(raw);
     if (state.orientation === 'portrait' || state.orientation === 'landscape') {
       orientation = state.orientation;
-      const sel = document.getElementById('orientation');
-      if (sel) sel.value = orientation;
     }
     if (Array.isArray(state.library)) {
       for (const l of state.library) library.push(l);
@@ -496,10 +646,21 @@ function addFileToLibrary(file) {
   reader.readAsDataURL(file);
 }
 
-// サイドバーへのドロップ
-$library.addEventListener('dragover', (e) => { e.preventDefault(); });
-$library.addEventListener('drop', (e) => {
+// サイドバーへのドロップ（領域全体で受け付け）
+const $sidebar = document.getElementById('sidebar');
+$sidebar.addEventListener('dragover', (e) => {
+  if (!e.dataTransfer.types.includes('Files')) return;
   e.preventDefault();
+  $sidebar.classList.add('dragover');
+});
+$sidebar.addEventListener('dragleave', (e) => {
+  if (e.target === $sidebar || !$sidebar.contains(e.relatedTarget)) {
+    $sidebar.classList.remove('dragover');
+  }
+});
+$sidebar.addEventListener('drop', (e) => {
+  e.preventDefault();
+  $sidebar.classList.remove('dragover');
   for (const f of e.dataTransfer.files) addFileToLibrary(f);
 });
 
@@ -509,7 +670,7 @@ function renderLibrary() {
   if (library.length === 0) {
     const empty = document.createElement('div');
     empty.id = 'empty';
-    empty.innerHTML = 'PNGをインポート<br>またはここにドロップ';
+    empty.innerHTML = '画像をここにドロップ<br>またはツールバーから追加';
     $library.appendChild(empty);
     return;
   }
@@ -604,6 +765,10 @@ function render() {
   $print.style.top = (printY * displayScale) + 'px';
   $print.style.width = (printW * displayScale) + 'px';
   $print.style.height = (printH * displayScale) + 'px';
+
+  // 空キャンバスのガイド表示
+  const $empty = document.getElementById('canvas-empty-state');
+  if ($empty) $empty.classList.toggle('hidden', stickers.length > 0);
 
   $canvas.innerHTML = '';
   $canvas.style.position = 'absolute';
@@ -835,9 +1000,17 @@ window.addEventListener('keydown', (e) => {
 });
 
 // ========= ツールバー =========
-document.getElementById('orientation').addEventListener('change', (e) => {
-  orientation = e.target.value;
-  updateCanvasSize();
+function updateOrientButtons() {
+  document.querySelectorAll('#orientation-group [data-orient]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.orient === orientation);
+  });
+}
+document.querySelectorAll('#orientation-group [data-orient]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    orientation = btn.dataset.orient;
+    updateCanvasSize();
+    updateOrientButtons();
+  });
 });
 document.getElementById('clear-btn').addEventListener('click', () => {
   if (stickers.length === 0) return;
@@ -976,6 +1149,7 @@ function loadImage(src) {
 
 // ========= 起動 =========
 loadSaved();
+updateOrientButtons();
 updateCanvasSize();
 renderLibrary();
 updateUndoButtons();
