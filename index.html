@@ -195,6 +195,11 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
+    position: relative;
+  }
+  /* 空キャンバス時はwrapを非表示（empty-stateだけを見せる） */
+  #canvas-area:has(#canvas-empty-state:not(.hidden)) #canvas-wrap {
+    visibility: hidden;
   }
   #canvas-wrap {
     position: relative;
@@ -462,11 +467,16 @@
 
   /* ハンバーガーボタン（モバイルのみ表示） */
   #sidebar-toggle { display: none; }
+  /* オーバーレイはモバイルドロワー専用 */
+  #sidebar-overlay { display: none; }
 
   /* ========= モバイル対応 ========= */
   @media (max-width: 720px) {
     #app {
       grid-template-columns: 1fr;
+    }
+    #canvas-area {
+      padding: 12px;
     }
     #toolbar {
       padding: 0 10px;
@@ -506,6 +516,7 @@
     }
     #sidebar.open { right: 0; }
     #sidebar-overlay {
+      display: block;
       position: fixed;
       inset: 48px 0 0 0;
       background: rgba(0,0,0,0.4);
@@ -673,7 +684,9 @@
       <div id="print-area"></div>
       <div class="margin-label margin-label-top">切り取り範囲の目安</div>
       <div class="margin-label margin-label-bottom">切り取り範囲の目安</div>
-      <div id="canvas-empty-state">
+      <div id="canvas"></div>
+    </div>
+    <div id="canvas-empty-state">
         <div class="empty-headline">ここに画像を並べよう</div>
         <div class="empty-panels">
           <div class="panel">
@@ -916,8 +929,6 @@
           </div>
         </div>
       </div>
-      <div id="canvas"></div>
-    </div>
   </div>
 
   <div id="sidebar-overlay"></div>
@@ -1077,8 +1088,11 @@ function updateCanvasSize() {
     displayScale = calibratedPPI / DPI;
   } else {
     // フィット表示
-    const maxH = window.innerHeight - 48 - 48;
-    const maxW = window.innerWidth - 240 - 48;
+    const isMobile = window.innerWidth <= 720;
+    const sidebarW = isMobile ? 0 : 240;
+    const padding = isMobile ? 24 : 48;
+    const maxH = window.innerHeight - 48 - padding;
+    const maxW = window.innerWidth - sidebarW - padding;
     displayScale = Math.min(maxH / canvasH, maxW / canvasW, 1);
   }
   $wrap.style.width = (canvasW * displayScale) + 'px';
