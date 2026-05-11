@@ -226,7 +226,7 @@
     background: var(--paper-margin);
     box-shadow: 0 8px 32px var(--shadow-canvas);
     flex-shrink: 0;
-    touch-action: none;
+    touch-action: pan-x pan-y;  /* 空きエリアで1本指スクロール可、ピンチはステッカー上で発生 */
   }
   .sticker, .handle { touch-action: none; }
   #canvas-wrap.dragover { outline: 3px dashed #4a7cfa; outline-offset: 4px; }
