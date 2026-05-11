@@ -466,9 +466,10 @@
   .modal button.primary { background: #4a7cfa; }
   .modal button:hover { filter: brightness(1.15); }
 
-  /* ハンバーガー / 設定ボタンはモバイルのみ表示 */
+  /* ハンバーガー / 設定ボタン / モバイルタイトルはモバイルのみ表示 */
   #toolbar #sidebar-toggle { display: none; }
   #toolbar #settings-btn { display: none; }
+  #mobile-title { display: none; }
   /* オーバーレイはモバイルドロワー専用 */
   #sidebar-overlay { display: none; }
 
@@ -500,19 +501,32 @@
 
   /* ========= モバイル対応 ========= */
   @media (max-width: 720px) {
-    /* モバイル: ツールバーを下のボトムバーに */
+    /* モバイル: タイトル / キャンバス / ボトムバー */
     #app {
       grid-template-columns: 1fr;
-      grid-template-rows: 1fr 56px;
+      grid-template-rows: 40px 1fr 56px;
+    }
+    #mobile-title {
+      display: flex;
+      grid-column: 1;
+      grid-row: 1;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-toolbar);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
     }
     #canvas-area {
       padding: 12px;
       grid-column: 1;
-      grid-row: 1;
+      grid-row: 2;
     }
     #toolbar {
       grid-column: 1;
-      grid-row: 2;
+      grid-row: 3;
       flex-direction: row;
       align-items: center;
       justify-content: space-around;
@@ -596,6 +610,7 @@
 </head>
 <body>
 <div id="app">
+  <header id="mobile-title">すてっかーめーかー</header>
   <div id="toolbar">
     <h1>すてっかーめーかー</h1>
     <label class="btn icon-btn" title="画像を追加">
@@ -697,6 +712,59 @@
         <line x1="12" y1="15" x2="12" y2="3"/>
       </svg>
     </button>
+  </div>
+
+  <div class="modal-bg" id="sticker-context-modal">
+    <div class="modal">
+      <h3>ステッカーの操作</h3>
+      <div class="settings-list">
+        <button class="settings-item" data-ctx-action="duplicate">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span>複製（コピー&amp;ペースト）</span>
+        </button>
+        <button class="settings-item" data-ctx-action="copy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span>コピー</span>
+        </button>
+        <button class="settings-item" data-ctx-action="paste">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+          </svg>
+          <span>ペースト</span>
+        </button>
+        <button class="settings-item" data-ctx-action="front">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 14 12 8 18 14"/>
+            <line x1="6" y1="20" x2="18" y2="20"/>
+          </svg>
+          <span>前面へ</span>
+        </button>
+        <button class="settings-item" data-ctx-action="back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 10 12 16 18 10"/>
+            <line x1="6" y1="4" x2="18" y2="4"/>
+          </svg>
+          <span>背面へ</span>
+        </button>
+        <button class="settings-item danger" data-ctx-action="delete">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          <span>削除</span>
+        </button>
+      </div>
+      <div class="actions">
+        <button id="sticker-context-close">閉じる</button>
+      </div>
+    </div>
   </div>
 
   <div class="modal-bg" id="settings-modal">
@@ -1171,9 +1239,10 @@ function updateCanvasSize() {
     // フィット表示
     const isMobile = window.innerWidth <= 720;
     const toolbarH = isMobile ? 56 : 48;  // モバイル下、デスクトップ上
+    const titleH = isMobile ? 40 : 0;     // モバイルのみ上にタイトル
     const sidebarW = isMobile ? 0 : 240;
     const padding = isMobile ? 24 : 48;
-    const maxH = window.innerHeight - toolbarH - padding;
+    const maxH = window.innerHeight - toolbarH - titleH - padding;
     const maxW = window.innerWidth - sidebarW - padding;
     displayScale = Math.min(maxH / canvasH, maxW / canvasW, 1);
   }
@@ -1394,6 +1463,28 @@ let drag = null;
 // ========= ポインター操作（マウス・タッチ統一） =========
 const activePointers = new Map(); // pointerId → {clientX, clientY}
 let pinch = null;
+let longPressTimer = null;
+let longPressStart = null; // {x, y}
+
+function startLongPressTimer(clientX, clientY) {
+  cancelLongPress();
+  longPressStart = { x: clientX, y: clientY };
+  longPressTimer = setTimeout(() => {
+    longPressTimer = null;
+    // 長押し成立 → ドラッグはキャンセルしてコンテキストメニューを開く
+    if (drag && !drag.moved) {
+      // 直前にpushUndoしたぶんを巻き戻し
+      if (undoStack.length > 0) { undoStack.pop(); updateUndoButtons(); }
+    }
+    drag = null;
+    activePointers.clear();
+    openStickerContext();
+  }, 500);
+}
+function cancelLongPress() {
+  if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+  longPressStart = null;
+}
 
 $canvas.addEventListener('pointerdown', onPointerDown);
 window.addEventListener('pointermove', onPointerMove);
@@ -1435,9 +1526,12 @@ function onPointerDown(e) {
       }
     } else {
       drag = { type: 'move', s, offsetX: startMouse.x - s.x, offsetY: startMouse.y - s.y, moved: false };
+      // ステッカー本体の長押し → コンテキストメニュー
+      startLongPressTimer(e.clientX, e.clientY);
     }
     e.preventDefault();
   } else if (activePointers.size === 2 && selectedId != null) {
+    cancelLongPress();
     // 第2ポインター: ピンチ・回転モードへ
     const s = stickers.find(x => x.id === selectedId);
     if (!s) return;
@@ -1460,6 +1554,10 @@ function onPointerDown(e) {
 function onPointerMove(e) {
   if (!activePointers.has(e.pointerId)) return;
   activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+  // 動いたら長押しキャンセル（5px以上）
+  if (longPressStart && (Math.abs(e.clientX - longPressStart.x) > 5 || Math.abs(e.clientY - longPressStart.y) > 5)) {
+    cancelLongPress();
+  }
 
   if (pinch && activePointers.size >= 2) {
     const ids = Array.from(activePointers.keys()).slice(0, 2);
@@ -1519,6 +1617,7 @@ function onPointerMove(e) {
 
 function onPointerUp(e) {
   activePointers.delete(e.pointerId);
+  cancelLongPress();
 
   if (pinch && activePointers.size < 2) {
     pinch = null;
@@ -1543,6 +1642,38 @@ function copySelected() {
   const s = stickers.find(x => x.id === selectedId);
   if (!s) return false;
   clipboard = { libId: s.libId, w: s.w, h: s.h, rot: s.rot };
+  return true;
+}
+function deleteSelected() {
+  if (selectedId == null) return false;
+  const idx = stickers.findIndex(x => x.id === selectedId);
+  if (idx < 0) return false;
+  pushUndo();
+  stickers.splice(idx, 1);
+  selectedId = null;
+  render();
+  return true;
+}
+function bringToFront() {
+  if (selectedId == null) return false;
+  const idx = stickers.findIndex(x => x.id === selectedId);
+  if (idx < 0 || idx === stickers.length - 1) return false;
+  pushUndo();
+  const s = stickers[idx];
+  stickers.splice(idx, 1);
+  stickers.push(s);
+  render();
+  return true;
+}
+function sendToBack() {
+  if (selectedId == null) return false;
+  const idx = stickers.findIndex(x => x.id === selectedId);
+  if (idx < 0 || idx === 0) return false;
+  pushUndo();
+  const s = stickers[idx];
+  stickers.splice(idx, 1);
+  stickers.unshift(s);
+  render();
   return true;
 }
 function pasteClipboard() {
@@ -1801,6 +1932,33 @@ function toggleTheme() {
   localStorage.setItem(THEME_KEY, next);
 }
 document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+// ========= ステッカーのコンテキストメニュー（長押しで開く） =========
+const $stickerContextModal = document.getElementById('sticker-context-modal');
+function openStickerContext() {
+  if (selectedId == null) return;
+  // ペーストボタンの有効/無効を更新
+  const pasteBtn = $stickerContextModal.querySelector('[data-ctx-action="paste"]');
+  if (pasteBtn) pasteBtn.disabled = !clipboard;
+  $stickerContextModal.classList.add('show');
+}
+function closeStickerContext() { $stickerContextModal.classList.remove('show'); }
+document.getElementById('sticker-context-close').addEventListener('click', closeStickerContext);
+$stickerContextModal.addEventListener('click', (e) => {
+  if (e.target === $stickerContextModal) { closeStickerContext(); return; }
+  const item = e.target.closest('[data-ctx-action]');
+  if (!item || item.disabled) return;
+  const action = item.dataset.ctxAction;
+  switch (action) {
+    case 'duplicate': copySelected(); pasteClipboard(); break;
+    case 'copy': copySelected(); break;
+    case 'paste': pasteClipboard(); break;
+    case 'front': bringToFront(); break;
+    case 'back': sendToBack(); break;
+    case 'delete': deleteSelected(); break;
+  }
+  closeStickerContext();
+});
 
 // ========= 設定メニュー（モバイル用） =========
 const $settingsModal = document.getElementById('settings-modal');
