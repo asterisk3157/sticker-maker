@@ -122,8 +122,14 @@
     padding: 0 16px;
     background: var(--bg-toolbar);
     border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    min-width: 0;
   }
-  #toolbar h1 { font-size: 14px; font-weight: 600; margin-right: 12px; }
+  #toolbar > * { flex-shrink: 0; }
+  #toolbar h1 { font-size: 14px; font-weight: 600; margin-right: 12px; white-space: nowrap; }
+  #toolbar .info { white-space: nowrap; }
   #toolbar button, #toolbar label.btn {
     background: var(--bg-button); color: var(--text-primary); border: none; padding: 6px 14px;
     border-radius: 6px; cursor: pointer; font-size: 13px;
