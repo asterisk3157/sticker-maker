@@ -1113,10 +1113,12 @@ function updateCanvasSize() {
   } else {
     // フィット表示
     const isMobile = window.innerWidth <= 720;
-    const sidebarW = isMobile ? 0 : 240;
+    const toolbarH = isMobile ? 0 : 48;   // 上部ツールバー（デスクトップのみ）
+    const toolbarW = isMobile ? 52 : 0;   // 左ツールバー（モバイルのみ）
+    const sidebarW = isMobile ? 0 : 240;  // 右サイドバー（デスクトップのみ）
     const padding = isMobile ? 24 : 48;
-    const maxH = window.innerHeight - 48 - padding;
-    const maxW = window.innerWidth - sidebarW - padding;
+    const maxH = window.innerHeight - toolbarH - padding;
+    const maxW = window.innerWidth - toolbarW - sidebarW - padding;
     displayScale = Math.min(maxH / canvasH, maxW / canvasW, 1);
   }
   $wrap.style.width = (canvasW * displayScale) + 'px';
