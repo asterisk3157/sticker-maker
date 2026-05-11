@@ -158,10 +158,11 @@
   }
 
   /* テーマ切替: 現テーマと反対のアイコンを表示（クリック後の状態を予告） */
-  #theme-toggle .icon-sun { display: block; }
-  #theme-toggle .icon-moon { display: none; }
-  [data-theme="light"] #theme-toggle .icon-sun { display: none; }
-  [data-theme="light"] #theme-toggle .icon-moon { display: block; }
+  /* #toolbar をつけて #toolbar .icon-btn svg より優先度を上げる */
+  #toolbar #theme-toggle .icon-sun { display: block; }
+  #toolbar #theme-toggle .icon-moon { display: none; }
+  [data-theme="light"] #toolbar #theme-toggle .icon-sun { display: none; }
+  [data-theme="light"] #toolbar #theme-toggle .icon-moon { display: block; }
 
   /* 縦/横トグル */
   #orientation-group {
@@ -472,41 +473,63 @@
 
   /* ========= モバイル対応 ========= */
   @media (max-width: 720px) {
+    /* モバイル: ツールバーを左の縦帯に変更 */
     #app {
-      grid-template-columns: 1fr;
+      grid-template-columns: 52px 1fr;
+      grid-template-rows: 1fr;
     }
     #canvas-area {
       padding: 12px;
+      grid-column: 2;
+      grid-row: 1;
     }
     #toolbar {
-      padding: 0 10px;
-      gap: 6px;
-      overflow-x: auto;
-      flex-wrap: nowrap;
+      grid-column: 1;
+      grid-row: 1;
+      flex-direction: column;
+      width: 52px;
+      height: 100vh;
+      padding: 8px 6px;
+      gap: 8px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-bottom: none;
+      border-right: 1px solid var(--border);
+      align-items: center;
     }
-    #toolbar h1 {
-      font-size: 13px;
-      margin-right: 4px;
-      flex-shrink: 0;
-    }
+    #toolbar h1 { display: none; }
     #toolbar .info { display: none; }
-    #toolbar .spacer { display: none; }
+    #toolbar .spacer { flex: 1 1 auto; }  /* 保存ボタンを下に押す */
     #toolbar .icon-btn {
-      min-width: 38px;
-      height: 36px;
+      min-width: 40px;
+      width: 40px;
+      height: 40px;
       flex-shrink: 0;
     }
     #toolbar button.primary.icon-btn {
-      min-width: 48px;
-      height: 38px;
+      width: 42px;
+      height: 42px;
+    }
+    /* 縦/横トグルも縦並び */
+    #orientation-group {
+      flex-direction: column;
+      padding: 2px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    #orientation-group button {
+      width: 36px;
+      height: 28px;
+      padding: 4px;
     }
     #sidebar-toggle {
       display: inline-flex;
       flex-shrink: 0;
     }
+    /* サイドバーは右からスライド（高さフル） */
     #sidebar {
       position: fixed;
-      top: 48px;
+      top: 0;
       bottom: 0;
       right: -260px;
       width: 240px;
@@ -515,10 +538,11 @@
       box-shadow: -4px 0 16px rgba(0,0,0,0.15);
     }
     #sidebar.open { right: 0; }
+    /* オーバーレイはツールバー以外を覆う */
     #sidebar-overlay {
       display: block;
       position: fixed;
-      inset: 48px 0 0 0;
+      inset: 0 0 0 52px;
       background: rgba(0,0,0,0.4);
       opacity: 0;
       pointer-events: none;
