@@ -578,6 +578,13 @@
       max-height: 80vh;
       overflow-y: auto;
     }
+    /* キャリブレーションカード（縦向き）の中央テキストを縦幅に合わせる */
+    .calib-card::after {
+      content: 'カード等\A(54×85.6mm)';
+      white-space: pre;
+      text-align: center;
+      line-height: 1.4;
+    }
     .handle {
       width: 18px;
       height: 18px;
@@ -1800,8 +1807,15 @@ const CARD_W_MM = 85.6, CARD_H_MM = 54.0;
 function updateCalibPreview() {
   const px = Number($calibSlider.value);
   const ppi = px * 25.4 / CARD_W_MM;
-  $calibCard.style.width = px + 'px';
-  $calibCard.style.height = (px * CARD_H_MM / CARD_W_MM) + 'px';
+  const isMobile = window.innerWidth <= 720;
+  if (isMobile) {
+    // モバイル: 縦向き（短辺=幅、長辺=高さ）
+    $calibCard.style.width = (px * CARD_H_MM / CARD_W_MM) + 'px';
+    $calibCard.style.height = px + 'px';
+  } else {
+    $calibCard.style.width = px + 'px';
+    $calibCard.style.height = (px * CARD_H_MM / CARD_W_MM) + 'px';
+  }
   $calibInfo.textContent = `${px}px = 85.6mm  →  ${ppi.toFixed(1)} ppi`;
 }
 $calibSlider.addEventListener('input', updateCalibPreview);
