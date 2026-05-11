@@ -466,92 +466,103 @@
   .modal button.primary { background: #4a7cfa; }
   .modal button:hover { filter: brightness(1.15); }
 
-  /* ハンバーガーボタン（モバイルのみ表示） */
-  #sidebar-toggle { display: none; }
+  /* ハンバーガー / 設定ボタンはモバイルのみ表示 */
+  #toolbar #sidebar-toggle { display: none; }
+  #toolbar #settings-btn { display: none; }
   /* オーバーレイはモバイルドロワー専用 */
   #sidebar-overlay { display: none; }
 
+  /* 設定メニュー（モーダル内のリスト） */
+  .settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .settings-item {
+    background: var(--bg-button);
+    color: var(--text-primary);
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    text-align: left;
+    width: 100%;
+  }
+  .settings-item:hover { background: var(--bg-button-hover); }
+  .settings-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .settings-item.danger { color: #d04040; }
+  [data-theme="light"] .settings-item.danger { color: #b03030; }
+
   /* ========= モバイル対応 ========= */
   @media (max-width: 720px) {
-    /* モバイル: ツールバーを左の縦帯に変更 */
+    /* モバイル: ツールバーを下のボトムバーに */
     #app {
-      grid-template-columns: 52px 1fr;
-      grid-template-rows: 1fr;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 56px;
     }
     #canvas-area {
       padding: 12px;
-      grid-column: 2;
+      grid-column: 1;
       grid-row: 1;
     }
     #toolbar {
       grid-column: 1;
-      grid-row: 1;
-      flex-direction: column;
-      width: 52px;
-      height: 100vh;
-      padding: 8px 6px;
-      gap: 8px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      border-bottom: none;
-      border-right: 1px solid var(--border);
+      grid-row: 2;
+      flex-direction: row;
       align-items: center;
+      justify-content: space-around;
+      width: 100%;
+      height: 56px;
+      padding: 0 8px;
+      gap: 4px;
+      overflow: visible;
+      border-bottom: none;
+      border-top: 1px solid var(--border);
     }
-    #toolbar h1 { display: none; }
-    #toolbar .info { display: none; }
-    #toolbar .spacer { flex: 1 1 auto; }  /* 保存ボタンを下に押す */
-    #toolbar .icon-btn {
-      min-width: 40px;
-      width: 40px;
-      height: 40px;
-      flex-shrink: 0;
-    }
-    #toolbar button.primary.icon-btn {
-      width: 42px;
-      height: 42px;
-    }
-    /* 縦/横トグルも縦並び */
-    #orientation-group {
-      flex-direction: column;
-      padding: 2px;
-      gap: 2px;
-      flex-shrink: 0;
-    }
-    #orientation-group button {
-      width: 36px;
-      height: 28px;
-      padding: 4px;
-    }
+    /* ボトムバーで非表示にする要素 */
+    #toolbar h1,
+    #toolbar .info,
+    #toolbar .spacer,
+    #orientation-group,
+    #actual-size-btn,
+    #calib-open-btn,
+    #clear-btn,
+    #theme-toggle,
+    #toolbar a.icon-btn,
     #sidebar-toggle {
-      display: inline-flex;
+      display: none !important;
+    }
+    /* 設定ボタンはモバイルで表示 */
+    #toolbar #settings-btn { display: inline-flex; }
+    #toolbar .icon-btn {
+      min-width: 44px;
+      width: 44px;
+      height: 44px;
       flex-shrink: 0;
     }
-    /* サイドバーは右からスライド（高さフル） */
-    #sidebar {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      right: -260px;
-      width: 240px;
-      z-index: 50;
-      transition: right 0.25s ease;
-      box-shadow: -4px 0 16px rgba(0,0,0,0.15);
+    #toolbar label.icon-btn,
+    #toolbar button.primary.icon-btn {
+      width: 56px;
+      height: 46px;
     }
-    #sidebar.open { right: 0; }
-    /* オーバーレイはツールバー以外を覆う */
-    #sidebar-overlay {
-      display: block;
-      position: fixed;
-      inset: 0 0 0 52px;
-      background: rgba(0,0,0,0.4);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s;
-      z-index: 40;
-    }
-    #sidebar-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
+    /* ライブラリUIはモバイルで非表示（内部データは保持） */
+    #sidebar { display: none; }
+    #sidebar-overlay { display: none; }
+
+    /* モーダルをボトムシート風に */
+    .modal-bg.show { align-items: flex-end; padding: 0; }
+    .modal {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 14px 14px 0 0;
+      padding: 20px 16px max(20px, env(safe-area-inset-bottom));
+      max-height: 80vh;
+      overflow-y: auto;
     }
     .handle {
       width: 18px;
@@ -669,6 +680,13 @@
         <line x1="3" y1="18" x2="21" y2="18"/>
       </svg>
     </button>
+    <button id="settings-btn" class="icon-btn" title="設定メニュー">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="5" cy="12" r="1.5"/>
+        <circle cx="12" cy="12" r="1.5"/>
+        <circle cx="19" cy="12" r="1.5"/>
+      </svg>
+    </button>
     <span class="spacer"></span>
     <span class="info" id="save-status"></span>
     <span class="info" id="status">ステッカー: 0</span>
@@ -679,6 +697,45 @@
         <line x1="12" y1="15" x2="12" y2="3"/>
       </svg>
     </button>
+  </div>
+
+  <div class="modal-bg" id="settings-modal">
+    <div class="modal">
+      <h3>設定</h3>
+      <div class="settings-list">
+        <button class="settings-item" data-action="orient-portrait">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1.5"/></svg>
+          <span>縦向き (127×178mm)</span>
+        </button>
+        <button class="settings-item" data-action="orient-landscape">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="1.5"/></svg>
+          <span>横向き (178×127mm)</span>
+        </button>
+        <button class="settings-item" data-action="actual-size">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="9" width="20" height="6" rx="1"/><line x1="6" y1="9" x2="6" y2="11.5"/><line x1="9" y1="9" x2="9" y2="12.5"/><line x1="12" y1="9" x2="12" y2="11.5"/><line x1="15" y1="9" x2="15" y2="12.5"/><line x1="18" y1="9" x2="18" y2="11.5"/></svg>
+          <span>実物大で見る</span>
+        </button>
+        <button class="settings-item" data-action="calib">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+          <span>画面サイズ調整</span>
+        </button>
+        <button class="settings-item" data-action="theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          <span>テーマ切替</span>
+        </button>
+        <button class="settings-item" data-action="about">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>使い方を見る</span>
+        </button>
+        <button class="settings-item danger" data-action="clear">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          <span>全部消す</span>
+        </button>
+      </div>
+      <div class="actions">
+        <button id="settings-close">閉じる</button>
+      </div>
+    </div>
   </div>
 
   <div class="modal-bg" id="calib-modal">
@@ -1113,12 +1170,11 @@ function updateCanvasSize() {
   } else {
     // フィット表示
     const isMobile = window.innerWidth <= 720;
-    const toolbarH = isMobile ? 0 : 48;   // 上部ツールバー（デスクトップのみ）
-    const toolbarW = isMobile ? 52 : 0;   // 左ツールバー（モバイルのみ）
-    const sidebarW = isMobile ? 0 : 240;  // 右サイドバー（デスクトップのみ）
+    const toolbarH = isMobile ? 56 : 48;  // モバイル下、デスクトップ上
+    const sidebarW = isMobile ? 0 : 240;
     const padding = isMobile ? 24 : 48;
     const maxH = window.innerHeight - toolbarH - padding;
-    const maxW = window.innerWidth - toolbarW - sidebarW - padding;
+    const maxW = window.innerWidth - sidebarW - padding;
     displayScale = Math.min(maxH / canvasH, maxW / canvasW, 1);
   }
   $wrap.style.width = (canvasW * displayScale) + 'px';
@@ -1139,7 +1195,14 @@ window.addEventListener('resize', updateCanvasSize);
 
 // ========= ファイル取り込み =========
 document.getElementById('file-input').addEventListener('change', (e) => {
-  for (const f of e.target.files) addFileToLibrary(f);
+  // 直接キャンバス中央にステッカーとして配置（複数選択時は少しずつずらす）
+  const files = Array.from(e.target.files);
+  files.forEach((f, i) => {
+    const stagger = 60;
+    const offsetX = ((i % 3) - 1) * stagger;
+    const offsetY = (Math.floor(i / 3) - 1) * stagger;
+    addFileAndPlace(f, canvasW / 2 + offsetX, canvasH / 2 + offsetY);
+  });
   e.target.value = '';
 });
 
@@ -1738,6 +1801,29 @@ function toggleTheme() {
   localStorage.setItem(THEME_KEY, next);
 }
 document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+// ========= 設定メニュー（モバイル用） =========
+const $settingsModal = document.getElementById('settings-modal');
+function openSettings() { $settingsModal.classList.add('show'); }
+function closeSettings() { $settingsModal.classList.remove('show'); }
+document.getElementById('settings-btn').addEventListener('click', openSettings);
+document.getElementById('settings-close').addEventListener('click', closeSettings);
+$settingsModal.addEventListener('click', (e) => {
+  if (e.target === $settingsModal) { closeSettings(); return; }
+  const item = e.target.closest('.settings-item');
+  if (!item) return;
+  const action = item.dataset.action;
+  switch (action) {
+    case 'orient-portrait': orientation = 'portrait'; updateCanvasSize(); updateOrientButtons(); break;
+    case 'orient-landscape': orientation = 'landscape'; updateCanvasSize(); updateOrientButtons(); break;
+    case 'actual-size': document.getElementById('actual-size-btn').click(); break;
+    case 'calib': openCalibration(); return; // calibモーダルが上に開くので閉じない
+    case 'theme': toggleTheme(); break;
+    case 'about': window.open('about.html', '_blank'); break;
+    case 'clear': document.getElementById('clear-btn').click(); break;
+  }
+  closeSettings();
+});
 
 // ========= サイドバー（モバイルドロワー） =========
 const $sidebarOverlay = document.getElementById('sidebar-overlay');
